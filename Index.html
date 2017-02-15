@@ -10,8 +10,8 @@
   <link href="css/style.css" rel="stylesheet" type="text/css" />
   <link href="css/colour.css" rel="stylesheet" type="text/css" />
   <!-- modernizr enables HTML5 elements and feature detects -->
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-  <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
   <script type="text/javascript" src="js/modernizr-1.5.min.js"></script>
   <style>
         .buttons{
@@ -25,9 +25,6 @@
           font: 100% 'trebuchet ms', arial, sans-serif; 
           width: 100px;
           height: 50px;
-        }
-        .loader{
-          display: none;
         }
         .picture{
           text-align: center;
@@ -46,12 +43,12 @@
     <!-- begin content -->
     <div id="site_content">
       <div class="picture">
-        <img src="images/rolling.gif" alt="" class="loader" />
-        <p class="loader">Looking for a gif cat!</p>
-        <img width="100%" height="450" src="" alt="" id="current-gif" />
+        <img v-show="loader" src="images/rolling.gif" alt="" class="loader" />
+        <p  v-show="loader" class="loader">Looking for a gif cat!</p>
+        <img v-show="gif" width="100%" height="450" v-bind:src="gifSource" alt="" id="current-gif" />
       </div>
       <div class="buttons">
-          <button class="btn-next" onclick="GetRandomGif();">Next!</button>
+          <button id="btn-next" class="btn-next" v-on:click="getRandomGif">Next!</button>
       </div>
     </div>
     <!-- end content -->
@@ -65,28 +62,36 @@
     
   </div>
   <script>
-    GetRandomGif();
-
-    function GetRandomGif(){
-        $.ajax({
-            url: "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g",
-            beforeSend: function() {
-              $(".loader").show();
-              $("#current-gif").hide();
-            },
-            success:function(response){
-                $("#current-gif").attr("src", response.data.image_original_url)
-            },
-            error:function(){
-
-            }
-        }).done(function(){
-          setTimeout(function(){ 
-            $(".loader").hide();
-            $("#current-gif").show();
-            }, 1000);
+    var app = new Vue({
+      el:"#main",
+      data:{
+        gifSource:"",
+        loader:true,
+        gif:false
+      },
+       created: function(){
+         this.getRandomGif();
+       },
+      methods: {
+        getRandomGif: function () {
+          this.$http.get("http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g")
+          .then(function(response){
+            this.loader = false;
+            this.gifSource = response.body.data.image_original_url;
+            this.gif = true;
         });
-    }
-    </script>
+        }
+      },
+      http:{
+        before : function(Request){
+          this.loader = true;
+          this.gif = false;
+        },
+        progress :function(event){
+          
+        }
+      }
+    });
+  </script>
 </body>
 </html>
