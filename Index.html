@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Cat Roulette Gif!</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <!-- stylesheets -->
+  <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <link href="css/colour.css" rel="stylesheet" type="text/css" />
+  <!-- modernizr enables HTML5 elements and feature detects -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="js/modernizr-1.5.min.js"></script>
+  <style>
+        .buttons{
+          padding-top: 15px;
+          padding-bottom: 5px;
+          text-align: center;
+          font: 100% 'trebuchet ms', arial, sans-serif; 
+        }
+
+        .buttons .btn-next{
+          font: 100% 'trebuchet ms', arial, sans-serif; 
+          width: 100px;
+          height: 50px;
+        }
+        .loader{
+          display: none;
+        }
+        .picture{
+          text-align: center;
+        }
+  </style>
+</head>
+
+<body>
+  <div id="main">
+    <!-- begin header -->
+    <header>
+      <div id="logo"><h1>Cat<a href="#">Roulette</a>Gif!</h1></div>
+    </header>
+    <!-- end header -->
+
+    <!-- begin content -->
+    <div id="site_content">
+      <div class="picture">
+        <img src="images/rolling.gif" alt="" class="loader" />
+        <p class="loader">Looking for a gif cat!</p>
+        <img width="100%" height="450" src="" alt="" id="current-gif" />
+      </div>
+      <div class="buttons">
+          <button class="btn-next" onclick="GetRandomGif();">Next!</button>
+      </div>
+    </div>
+    <!-- end content -->
+
+    <!-- begin footer -->
+    <footer>
+      <p>Copyright &copy; 2012 PhotoArtWork2_reverse. All Rights Reserved. <a href="http://www.css3templates.co.uk">Design from css3templates.co.uk</a>.</p>
+      <p><img src="images/twitter.png" alt="twitter" />&nbsp;<img src="images/facebook.png" alt="facebook" />&nbsp;<img src="images/rss.png" alt="rss" /></p>
+    </footer>
+    <!-- end footer -->
+    
+  </div>
+  <script>
+    GetRandomGif();
+
+    function GetRandomGif(){
+        $.ajax({
+            url: "http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g",
+            beforeSend: function() {
+              $(".loader").show();
+              $("#current-gif").hide();
+            },
+            success:function(response){
+                $("#current-gif").attr("src", response.data.image_original_url)
+            },
+            error:function(){
+
+            }
+        }).done(function(){
+          setTimeout(function(){ 
+            $(".loader").hide();
+            $("#current-gif").show();
+            }, 1000);
+        });
+    }
+    </script>
+</body>
+</html>
