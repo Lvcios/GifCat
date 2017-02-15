@@ -74,7 +74,7 @@
        },
       methods: {
         getRandomGif: function () {
-          this.$http.get("http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g")
+          this.$http.get("https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g")
           .then(function(response){
             this.loader = false;
             this.gifSource = response.body.data.image_original_url;
