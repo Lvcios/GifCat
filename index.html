@@ -111,7 +111,7 @@
           if(this.current.includes("gif")){
             this.currentGif = this.current.split('=')[1];
             if(this.currentGif == "") this.currentGif = "3oEdv5Dee4kZbhW4Za";
-            this.urlSource = "http://api.giphy.com/v1/gifs/" + this.currentGif +"?api_key=dc6zaTOxFJmzC";
+            this.urlSource = "https://api.giphy.com/v1/gifs/" + this.currentGif +"?api_key=dc6zaTOxFJmzC";
             this.$http.get(this.urlSource)
               .then(function(response){
                 this.loader = false;
