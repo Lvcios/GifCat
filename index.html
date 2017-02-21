@@ -25,9 +25,33 @@
           font: 100% 'trebuchet ms', arial, sans-serif; 
           width: 100px;
           height: 50px;
+          border-radius: 5px;
+          background-color: #383838;
+          color: #fff;
         }
         .picture{
           text-align: center;
+        }
+        .picture img{
+          object-fit: contain;
+        }
+
+        .social-buttons{
+          padding-top: 5px;
+          padding-bottom: 5px;
+        }
+        .btn-twitter{
+          height: 32px;
+          width: 32px;
+          background: url(images/twitter.png) no-repeat;
+          border: none;
+        }
+
+        .btn-facebook{
+          height: 32px;
+          width: 32px;
+          background: url(images/facebook.png) no-repeat;
+          border: none;
         }
   </style>
 </head>
@@ -42,10 +66,16 @@
 
     <!-- begin content -->
     <div id="site_content">
+      <div class="social-buttons">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-show-count="true" size="large" data-text="If you like Cats you must visit CatRouletteGif!" data-url="https://lvcios.github.io/GifCat/index.html">Tweet this gif</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </div>
       <div class="picture">
         <img v-show="loader" src="images/rolling.gif" alt="" class="loader" />
         <p  v-show="loader" class="loader">Looking for a gif cat!</p>
         <img v-show="gif" width="100%" height="450" v-bind:src="gifSource" alt="" id="current-gif" />
+        <div class="social-buttons">
+          <button class="btn-twitter" v-on:click="share('tw')"></button>
+        </div>
       </div>
       <div class="buttons">
           <button id="btn-next" class="btn-next" v-on:click="getRandomGif">Next!</button>
@@ -67,19 +97,51 @@
       data:{
         gifSource:"",
         loader:true,
-        gif:false
+        gif:false,
+        current: window.location.search,
+        urlSource:"https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g",
+        currentGif:"",
+        shareURL: ""
       },
        created: function(){
          this.getRandomGif();
        },
       methods: {
         getRandomGif: function () {
-          this.$http.get("https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g")
-          .then(function(response){
-            this.loader = false;
-            this.gifSource = response.body.data.image_original_url;
-            this.gif = true;
-        });
+          if(this.current.includes("gif")){
+            this.currentGif = this.current.split('=')[1];
+            if(this.currentGif == "") this.currentGif = "3oEdv5Dee4kZbhW4Za";
+            this.urlSource = "http://api.giphy.com/v1/gifs/" + this.currentGif +"?api_key=dc6zaTOxFJmzC";
+            this.$http.get(this.urlSource)
+              .then(function(response){
+                this.loader = false;
+                this.gifSource = response.body.data.images.original.url;
+                this.gif = true;
+                this.current = "";
+            });
+          }
+          else{
+            this.urlSource = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g";
+            this.$http.get(this.urlSource)
+              .then(function(response){
+                this.loader = false;
+                this.gifSource = response.body.data.image_original_url;
+                this.gif = true;
+                this.currentGif = response.body.data.id;
+            });
+          }
+        },
+        share:function(where){
+          switch(where){
+            case "tw":
+              this.shareURL = "https://twitter.com/intent/tweet?ref_src=twsrc^tfw&text=I like this gif from CatRouletteGif&tw_p=tweetbutton&url=https://lvcios.github.io/GifCat/index.html?gif=" + this.currentGif;
+            break;
+            case "fb":
+            break;
+            default:break;
+          }
+
+          window.open(encodeURI(this.shareURL), "Share","width=640,height=480")
         }
       },
       http:{
@@ -92,6 +154,25 @@
         }
       }
     });
+  </script>
+  <script>
+    window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
+
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
+
+    
+    return t;
+  }(document, "script", "twitter-wjs"));
   </script>
 </body>
 </html>
