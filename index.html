@@ -110,11 +110,16 @@
             this.urlSource = "https://api.giphy.com/v1/gifs/" + this.currentGif +"?api_key=dc6zaTOxFJmzC";
             this.$http.get(this.urlSource)
               .then(function(response){
+                  this.loader = false;
+                  this.gifSource = response.body.data.images.original.url;
+                  this.gif = true;
+                  this.current = "";
+              }, response =>{
                 this.loader = false;
-                this.gifSource = response.body.data.images.original.url;
+                this.gifSource = "https://media2.giphy.com/media/5f2mqsGTHpe5a/giphy.gif";
                 this.gif = true;
                 this.current = "";
-            });
+              });
           }
           else{
             this.urlSource = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat&rating=g";
@@ -124,7 +129,12 @@
                 this.gifSource = response.body.data.image_original_url;
                 this.gif = true;
                 this.currentGif = response.body.data.id;
-            });
+            }, response =>{
+                this.loader = false;
+                this.gifSource = "https://media2.giphy.com/media/5f2mqsGTHpe5a/giphy.gif";
+                this.gif = true;
+                this.current = "";
+              });
           }
         },
         share:function(where){
